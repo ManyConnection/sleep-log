@@ -1,9 +1,53 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SleepEntry, SleepState } from '../types/sleep';
+import { DrinkRecord, AppSettings } from '../types';
+import { STORAGE_KEYS, DEFAULT_SETTINGS } from '../constants';
 
 const SLEEP_ENTRIES_KEY = 'sleep_entries';
 const CURRENT_STATE_KEY = 'current_sleep_state';
 const CURRENT_SLEEP_START_KEY = 'current_sleep_start';
+
+// ============ Water/Drink Records ============
+
+export async function loadRecords(): Promise<DrinkRecord[]> {
+  try {
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.RECORDS);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error('Error loading records:', error);
+    return [];
+  }
+}
+
+export async function saveRecords(records: DrinkRecord[]): Promise<void> {
+  try {
+    await AsyncStorage.setItem(STORAGE_KEYS.RECORDS, JSON.stringify(records));
+  } catch (error) {
+    console.error('Error saving records:', error);
+    throw error;
+  }
+}
+
+export async function loadSettings(): Promise<AppSettings> {
+  try {
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.SETTINGS);
+    return data ? JSON.parse(data) : DEFAULT_SETTINGS;
+  } catch (error) {
+    console.error('Error loading settings:', error);
+    return DEFAULT_SETTINGS;
+  }
+}
+
+export async function saveSettings(settings: AppSettings): Promise<void> {
+  try {
+    await AsyncStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+  } catch (error) {
+    console.error('Error saving settings:', error);
+    throw error;
+  }
+}
+
+// ============ Sleep Entries ============
 
 export async function getSleepEntries(): Promise<SleepEntry[]> {
   try {
